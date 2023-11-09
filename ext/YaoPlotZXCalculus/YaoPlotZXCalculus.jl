@@ -8,17 +8,16 @@ using ZXCalculus.ZX: ZXDiagram
 
 using MLStyle, Karnak, NetworkLayout, Colors, CairoMakie
 
-function YaoPlots.vizcircuit(cir::ZXDiagram, kwargs...)
+function YaoPlots.vizcircuit(cir::ZXDiagram; kwargs...)
     println("TODO")
 end
 
-function YaoPlots.vizcircuit(zxwd::ZXWDiagram)
+function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
+    verbose = get(kwargs, :verbose, false)
     g = zxwd.mg
     vertexlabels = Vector{String}(undef, nv(zxwd.mg))
-    for (idx, vtx) in zxwd.st
-        vertexlabels[idx] = string(vtx)[15:end]
-    end
     vertexfillcolors = Vector{RGB}(undef, nv(zxwd.mg))
+
     green = RGB(0, 1, 0)
     red = RGB(1, 0, 0)
     yellow = RGB(1, 1, 0)
@@ -32,6 +31,15 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram)
             H => yellow
             W => black
             _ => white
+        end
+        if verbose
+            vertexlabels[idx] = string(v)[15:end]
+        else
+            if curcolor == white
+                vertexlabels[idx] = string(v)[15:end]
+            else
+                vertexlabels[idx] = string(v)[15:15]
+            end
         end
         vertexfillcolors[idx] = curcolor
     end
