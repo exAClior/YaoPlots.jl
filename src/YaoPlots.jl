@@ -12,11 +12,14 @@ export CircuitStyles, CircuitGrid, circuit_canvas, vizcircuit, darktheme!, light
 export bloch_sphere, BlochStyles
 export plot
 
-plot(;kwargs...) = x->plot(x;kwargs...)
+plot(; kwargs...) = x -> plot(x; kwargs...)
 plot(blk::AbstractBlock; kwargs...) = vizcircuit(blk; kwargs...)
 
 include("helperblock.jl")
 include("vizcircuit.jl")
 include("bloch.jl")
 
+if !isdefined(Base, :get_extension)
+    include("../ext/YaoPlotZXCalculus/YaoPlotZXCalculus.jl")
+end
 end

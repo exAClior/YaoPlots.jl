@@ -3,19 +3,35 @@ uuid = "32cfe2d9-419e-45f2-8191-2267705d8dbc"
 version = "0.9.0"
 
 [deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+Karnak = "cd156443-31ad-4f6f-850f-a93ee5f75905"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
+MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
+NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
 Thebes = "8b424ff8-82f5-59a4-86a6-de3761897198"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
+
+[weakdeps]
+ZXCalculus = "3525faa3-032d-4235-a8d4-8c2939a218dd"
+
+[extensions]
+YaoPlotZXCalculus = "ZXCalculus"
 
 [compat]
 Luxor = "3"
 Thebes = "0.9"
 Yao = "0.8"
+ZXCalculus = "0.6.0"
 julia = "1"
 
 [extras]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Karnak = "cd156443-31ad-4f6f-850f-a93ee5f75905"
+MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+ZXCalculus = "3525faa3-032d-4235-a8d4-8c2939a218dd"
 
 [targets]
-test = ["Test"]
+test = ["Test", "ZXCalculus"]
