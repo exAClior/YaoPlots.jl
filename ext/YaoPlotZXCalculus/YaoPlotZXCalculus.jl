@@ -14,6 +14,10 @@ end
 
 function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
     verbose = get(kwargs, :verbose, false)
+    graph_width = get(kwargs, :graphwidth, 10)
+    graph_height= get(kwargs, :graphheight, 10)
+    density = get(kwargs, :density, 2.0)
+    iterations = get(kwargs, :iterations, 100)
     g = zxwd.mg
     vertexlabels = Vector{String}(undef, nv(zxwd.mg))
     vertexfillcolors = Vector{RGB}(undef, nv(zxwd.mg))
@@ -44,26 +48,30 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
         vertexfillcolors[idx] = curcolor
     end
     initialpos, pin = Dict(), Dict()
+    height_step = graph_height / (length(zxwd.inputs))
     for (idx, input) in enumerate(zxwd.inputs)
-        initialpos[input] = (-2, idx)
+        initialpos[input] = (-graph_width/2, height_step * idx)
         pin[input] = (true, true)
     end
 
     for (idx, output) in enumerate(zxwd.outputs)
-        initialpos[output] = (nv(zxwd.mg) / length(zxwd.inputs), idx)
+        initialpos[output] = (graph_width/2, height_step * idx)
         pin[output] = (true, true)
     end
 
-    layout = SFDP(; initialpos = initialpos, pin = pin)
+    # layout = SFDP(; initialpos = initialpos, pin = pin)
+    layout = Spring(; initialpos = initialpos, pin = pin, C=density, iterations=iterations)
     @drawsvg begin
         background("black")
-        sethue("grey40")
+        sethue("blue")
         fontsize(8)
         drawgraph(
             g,
             layout = layout,
             vertexlabels = vertexlabels,
             vertexfillcolors = vertexfillcolors,
+            vertexlabelrotations = 0.4,
+            vertexlabeltextcolors = distinguishable_colors(20)
         )
     end 600 400
 end
