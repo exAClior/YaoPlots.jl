@@ -98,6 +98,7 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
             W => black
             _ => white
         end
+
         if verbose
             vertexlabels[idx] = string(v)[15:end]
         else
