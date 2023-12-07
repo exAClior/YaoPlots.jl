@@ -10,6 +10,7 @@ using ZXCalculus.ZX: ZXDiagram, SpiderType, phase
 using MLStyle, Karnak, NetworkLayout, Colors, CairoMakie
 
 function YaoPlots.vizcircuit(zxwd::Union{ZXDiagram, ZXWDiagram}; kwargs...)
+    # currently relies on idx in multigraph is equal to the number of vertices
 
     verbose = get(kwargs, :verbose, false)
     graph_width = get(kwargs, :graphwidth, 10)
@@ -130,11 +131,11 @@ function fill_info(zxd::ZXDiagram, verbose::Bool)
     for (idx, v) in zxd.st
         if v == SpiderType.X
             vertexfillcolors[idx] = red
-            vertexlabels[idx] =  "X($string(phase(zxd,idx)))"
+            vertexlabels[idx] =  "X($(string(phase(zxd,idx))))"
             vtxshapes[idx] = :circle
         elseif v == SpiderType.Z
             vertexfillcolors[idx] = green
-            vertexlabels[idx] =  "Z($string(phase(zxd,idx)))"
+            vertexlabels[idx] =  "Z($(string(phase(zxd,idx))))"
             vtxshapes[idx] = :circle
         elseif v == SpiderType.H
             vertexfillcolors[idx] = yellow
