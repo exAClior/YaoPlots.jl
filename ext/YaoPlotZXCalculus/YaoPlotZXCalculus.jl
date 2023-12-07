@@ -2,7 +2,8 @@ module YaoPlotZXCalculus
 
 import YaoPlots
 
-using ZXCalculus.ZXW: ZXWDiagram, nv, X, Z, D, H, W
+using ZXCalculus.ZXW: ZXWDiagram, nv, X, Z, D, H, W, Input, Output
+using ZXCalculus.Utils: PiUnit, Factor
 using ZXCalculus.ZX: ZXDiagram, SpiderType
 
 
@@ -80,9 +81,17 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
     graph_height= get(kwargs, :graphheight, 10)
     density = get(kwargs, :density, 2.0)
     iterations = get(kwargs, :iterations, 100)
+    circ_size = get(kwargs, :circsize, 10)
+    bgcolor = get(kwargs, :bgcolor, "black")
+    linewidth = get(kwargs, :linewidth, 3)
+    spfontsize = get(kwargs, :fontsize, 8)
+    vrot = get(kwargs, :vrot, 0.4)
+    plotsize = get(kwargs, :plotsize, (200, 100))
+
     g = zxwd.mg
     vertexlabels = Vector{String}(undef, nv(zxwd.mg))
     vertexfillcolors = Vector{RGB}(undef, nv(zxwd.mg))
+    vtxshapes = Vector{Symbol}(undef, nv(zxwd.mg))
 
     green = RGB(0, 1, 0)
     red = RGB(1, 0, 0)
@@ -90,7 +99,7 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
     black = RGB(0, 0, 0)
     white = RGB(1, 1, 1)
     for (idx, v) in zxwd.st
-        curcolor = @match v begin
+        vertexfillcolors[idx] = @match v begin
             X(_) => red
             Z(_) => green
             D => yellow
@@ -99,16 +108,34 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
             _ => white
         end
 
-        if verbose
-            vertexlabels[idx] = string(v)[15:end]
-        else
-            if curcolor == white
-                vertexlabels[idx] = string(v)[15:end]
-            else
-                vertexlabels[idx] = string(v)[15:15]
+        vertexlabels[idx] = @match v begin
+            X(p) => @match p begin
+                PiUnit(val,_) => "X($val * π)"
+                Factor(val,_) => "X($val)"
+                _ => "X"
             end
+            Z(p) => @match p begin
+                PiUnit(val,_) => "Z($val * π)"
+                Factor(val,_) => "Z($val)"
+                _ => "X"
+            end
+            D => "D"
+            H => "H"
+            W => "W"
+            Input(q) => "In($q)"
+            Output(q) => "Out($q)"
+            _ => "Unknown"
         end
-        vertexfillcolors[idx] = curcolor
+
+        vtxshapes[idx] = @match v begin
+            X(_) => :circle
+            Z(_) => :circle
+            D => :triangle
+            H => :square
+            W => :triangle
+            _ => :circle
+        end
+
     end
     initialpos, pin = Dict(), Dict()
     height_step = graph_height / (length(zxwd.inputs))
@@ -122,21 +149,26 @@ function YaoPlots.vizcircuit(zxwd::ZXWDiagram; kwargs...)
         pin[output] = (true, true)
     end
 
-    # layout = SFDP(; initialpos = initialpos, pin = pin)
     layout = Spring(; initialpos = initialpos, pin = pin, C=density, iterations=iterations)
     @drawsvg begin
-        background("black")
+        background(bgcolor)
         sethue("blue")
-        fontsize(8)
+        fontsize(spfontsize)
         drawgraph(
             g,
             layout = layout,
+            edgestrokeweights = linewidth,
+            edgestrokecolors = colorant"grey",
+            vertexshapesizes = circ_size,
+            vertexstrokecolors = colorant"grey",
+            vertexshapes = vtxshapes,
             vertexlabels = vertexlabels,
             vertexfillcolors = vertexfillcolors,
-            vertexlabelrotations = 0.4,
-            vertexlabeltextcolors = distinguishable_colors(20)
+
+            vertexlabelrotations = vrot,
+            vertexlabeltextcolors = colorant"blue"
         )
-    end 600 400
+    end plotsize[1] plotsize[2]
 end
 
 end
