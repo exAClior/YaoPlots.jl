@@ -6,6 +6,7 @@ using ZXCalculus.ZXW: ZXWDiagram, nv, X, Z, D, H, W, Input, Output
 using ZXCalculus.Utils: PiUnit, Factor
 using ZXCalculus.ZX: ZXDiagram, SpiderType, phase
 
+#TODO: Reimplement with interaction feature with GLMakie and GraphMakie https://graph.makie.org/stable/
 
 using MLStyle, Karnak, NetworkLayout, Colors, CairoMakie
 
